@@ -12,7 +12,7 @@ An optional custom input field is revealed via JS if "Custom" is selected.
 
 Calculation Logic:
 
-Earnings are normalized to per-second rates, then total seconds required for each target are calculated.
+Earnings are normalised to per-second rates, then total seconds required for each target are calculated.
 
 Final dates are computed by adding the total seconds (converted to milliseconds) to the user-selected start date.
 
