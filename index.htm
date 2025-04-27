@@ -1,0 +1,169 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How long to earn an amount of money calculator</title>
+    <style>
+    
+	body {
+  margin: 0;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: linear-gradient(270deg, #ffefd5, #add8e6, #f0e68c, #e0ffff);
+  background-size: 800% 800%;
+  animation: gradientAnimation 12s ease infinite;
+  font-family: Arial, sans-serif;
+}
+
+/* Animation for the gradient background */
+@keyframes gradientAnimation {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>How long to earn an amount of money calculator</h1><br>
+	<h2>A simple web page written during <strong>Storm Eowyn</strong> by K Munro</h2><br>
+	
+    <div class="controls">
+        <label>
+            Target Amount 1:
+            <select id="target1">
+                <option value="100">£100</option>
+                <option value="1000">£1,000</option>
+                <option value="10000">£10,000</option>
+                <option value="100000">£100,000</option>
+                <option value="1000000">£1,000,000</option>
+                <option value="1000000000">A billion</option>
+                <option value="1000000000000">A trillion</option>
+            </select>
+        </label>
+
+        <label>
+            Target Amount 2:
+            <select id="target2">
+                <option value="100">£100</option>
+                <option value="1000">£1,000</option>
+                <option value="10000">£10,000</option>
+                <option value="100000">£100,000</option>
+                <option value="1000000">£1,000,000</option>
+                <option value="1000000000">a billion</option>
+                <option value="1000000000000">a trillion</option>
+            </select>
+        </label>
+
+        <label>
+            Amount to Earn:
+            <select id="amount">
+                <option value="0.01">£0.01</option>
+                <option value="1">£1</option>
+                <option value="10">£10</option>
+                <option value="100">£100</option>
+                <option value="custom">Custom</option>
+            </select>
+        </label>
+        <label id="customAmountLabel" style="display: none;">
+            Custom Amount (£):
+            <input type="number" id="customAmount" step="0.01">
+        </label>
+
+        <label>
+            Frequency:
+            <select id="frequency">
+                <option value="1">Every second</option>
+                <option value="60">Every minute</option>
+                <option value="3600">Every hour</option>
+                <option value="86400">Every day</option>
+                <option value="604800">Every week</option>
+            </select>
+        </label>
+
+        <label>
+            Start Date:
+            <input type="date" id="startDate" value="">
+        </label>
+
+        <button onclick="calculateResults()">Calculate</button>
+    </div>
+
+    <div id="output"></div>
+</div>
+
+<script>
+    document.getElementById('startDate').value = new Date().toISOString().split('T')[0];
+
+    document.getElementById('amount').addEventListener('change', function () {
+        const customAmountLabel = document.getElementById('customAmountLabel');
+        customAmountLabel.style.display = this.value === 'custom' ? 'block' : 'none';
+    });
+
+    function calculateEarnings(target, amount, frequency) {
+        const earningsPerSecond = amount / frequency;
+        const totalSeconds = target / earningsPerSecond;
+        return totalSeconds;
+    }
+
+    function formatDuration(seconds) {
+        const days = Math.floor(seconds / 86400);
+        const months = Math.floor(days / 30.44);
+        const years = Math.floor(days / 365.25);
+        return {
+            days,
+            months,
+            years
+        };
+    }
+
+    function calculateResults() {
+        const target1 = parseFloat(document.getElementById('target1').value);
+        const target2 = parseFloat(document.getElementById('target2').value);
+        const amount = document.getElementById('amount').value === 'custom' 
+            ? parseFloat(document.getElementById('customAmount').value || 0) 
+            : parseFloat(document.getElementById('amount').value);
+        const frequency = parseFloat(document.getElementById('frequency').value);
+        const startDate = new Date(document.getElementById('startDate').value);
+
+        if (isNaN(amount) || amount <= 0) {
+            alert('Please enter a valid amount to earn.');
+            return;
+        }
+
+        const totalSeconds1 = calculateEarnings(target1, amount, frequency);
+        const totalSeconds2 = calculateEarnings(target2, amount, frequency);
+
+        const endDate1 = new Date(startDate.getTime() + totalSeconds1 * 1000);
+        const endDate2 = new Date(startDate.getTime() + totalSeconds2 * 1000);
+
+        const timesLonger = (totalSeconds2 / totalSeconds1).toFixed(2);
+
+        const duration1 = formatDuration(totalSeconds1);
+        const duration2 = formatDuration(totalSeconds2);
+
+        const output = document.getElementById('output');
+        output.innerHTML = `
+            <p>Target 1 (£${target1.toLocaleString()}) will be reached on: <strong>${endDate1.toLocaleDateString('en-GB')}</strong></p>
+            <p>This will take approximately <strong>${duration1.days}</strong> days, <strong>${duration1.months}</strong> months, or <strong>${duration1.years}</strong> years.</p>
+
+            <p>Target 2 (£${target2.toLocaleString()}) will be reached on: <strong>${endDate2.toLocaleDateString('en-GB')}</strong></p>
+            <p>This will take approximately <strong>${duration2.days}</strong> days, <strong>${duration2.months}</strong> months, or <strong>${duration2.years}</strong> years.</p>
+
+            
+        `;
+    }
+</script>
+</body>
+</html>
